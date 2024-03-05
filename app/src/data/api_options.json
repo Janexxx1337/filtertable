@@ -1,0 +1,172 @@
+{
+    "name": "Reference Book Group List",
+    "description": "",
+    "renders": [
+        "application/json",
+        "text/html"
+    ],
+    "parses": [
+        "application/json",
+        "application/x-www-form-urlencoded",
+        "multipart/form-data"
+    ],
+    "actions": {
+        "POST": {
+            "id": {
+                "type": "integer",
+                "required": false,
+                "read_only": true,
+                "label": "ID"
+            },
+            "name": {
+                "type": "string",
+                "required": false,
+                "read_only": false,
+                "label": "Наименование группы справочника",
+                "max_length": 255
+            },
+            "name_unique": {
+                "type": "string",
+                "required": false,
+                "read_only": false,
+                "label": "Название таблицы (уникальное)",
+                "max_length": 255
+            },
+            "param_name": {
+                "type": "string",
+                "required": false,
+                "read_only": false,
+                "label": "Наименование ценообразующего параметра",
+                "max_length": 255
+            },
+            "type": {
+                "type": "choice",
+                "required": false,
+                "read_only": false,
+                "label": "Тип недвижимости",
+                "choices": [
+                    {
+                        "value": "Q",
+                        "display_name": "Помещение"
+                    },
+                    {
+                        "value": "B",
+                        "display_name": "Здание"
+                    },
+                    {
+                        "value": "L",
+                        "display_name": "Земельный участок"
+                    }
+                ]
+            },
+            "source": {
+                "type": "string",
+                "required": false,
+                "read_only": false,
+                "label": "Источник информации",
+                "max_length": 255
+            },
+            "source_to_report": {
+                "type": "string",
+                "required": false,
+                "read_only": false,
+                "label": "Источник информации (в отчет под таблицей)"
+            },
+            "source_to_report_footnote": {
+                "type": "string",
+                "required": false,
+                "read_only": false,
+                "label": "Источник информации (сноска в отчет)"
+            },
+            "source_to_report_footnote_unique": {
+                "type": "string",
+                "required": false,
+                "read_only": false,
+                "label": "Источник информации (уникальные данные для сноски в отчет)"
+            },
+            "date_book": {
+                "type": "datetime",
+                "required": false,
+                "read_only": false,
+                "label": "Дата справочника"
+            },
+            "date_begin": {
+                "type": "datetime",
+                "required": false,
+                "read_only": false,
+                "label": "Период использования справочника (начало)"
+            },
+            "date_end": {
+                "type": "datetime",
+                "required": false,
+                "read_only": false,
+                "label": "Период использования справочника (конец)"
+            },
+            "type_data": {
+                "type": "choice",
+                "required": false,
+                "read_only": false,
+                "label": "Тип данных в справочнике",
+                "choices": [
+                    {
+                        "value": "K",
+                        "display_name": "Коэффициенты"
+                    },
+                    {
+                        "value": "F",
+                        "display_name": "Формула"
+                    },
+                    {
+                        "value": "P",
+                        "display_name": "Диапазон"
+                    }
+                ]
+            },
+            "formula": {
+                "type": "string",
+                "required": false,
+                "read_only": false,
+                "label": "Формула",
+                "max_length": 255
+            },
+            "type_calc": {
+                "type": "choice",
+                "required": false,
+                "read_only": false,
+                "label": "Тип расчёта",
+                "choices": [
+                    {
+                        "value": "R",
+                        "display_name": "Аренда"
+                    },
+                    {
+                        "value": "S",
+                        "display_name": "Продажа"
+                    }
+                ]
+            },
+            "type_market": {
+                "type": "choice",
+                "required": false,
+                "read_only": false,
+                "label": "Тип рынка",
+                "choices": [
+                    {
+                        "value": "A",
+                        "display_name": "Активный рынок"
+                    },
+                    {
+                        "value": "N",
+                        "display_name": "Неактивный рынок"
+                    }
+                ]
+            },
+            "added_by": {
+                "type": "field",
+                "required": false,
+                "read_only": false,
+                "label": "Кем добавлено"
+            }
+        }
+    }
+}
