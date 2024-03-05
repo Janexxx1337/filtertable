@@ -58,13 +58,11 @@
         <label :for="`param-name-${option}`" class="form-check-label">{{ option }}</label>
       </div>
     </div>
-
-    <button class="btn btn-primary mt-2" @click="emitFilters">Применить фильтры</button>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, defineEmits } from 'vue';
+import { ref, onMounted, defineEmits, watch } from 'vue';
 
 const emit = defineEmits(['update-filters']);
 const selectedFilters = ref({
@@ -79,10 +77,24 @@ const typeCalcOptions = ref([]);
 const sourceOptions = ref([]);
 const paramNameOptions = ref([]);
 
+// Функция для излучения текущих фильтров
+const emitCurrentFilters = () => {
+  emit('update-filters', selectedFilters.value);
+};
+
+// Установка наблюдателя за изменениями в каждом из фильтров
+watch(selectedFilters, emitCurrentFilters, { deep: true });
+
 onMounted(async () => {
   const optionsResponse = await import('../data/api_options.json');
-  typeOptions.value = optionsResponse.actions.POST.type.choices;
-  typeCalcOptions.value = optionsResponse.actions.POST.type_calc.choices;
+  typeOptions.value = optionsResponse.actions.POST.type.choices.map(choice => ({
+    value: choice.value,
+    display_name: choice.display_name
+  }));
+  typeCalcOptions.value = optionsResponse.actions.POST.type_calc.choices.map(choice => ({
+    value: choice.value,
+    display_name: choice.display_name
+  }));
 
   // Дополнительно загружаем 'api_data.json' для фильтров 'source' и 'param_name'
   const dataResponse = await import('../data/api_data.json');
@@ -110,4 +122,5 @@ const emitFilters = () => {
   font-weight: bold;
   margin-bottom: 0.5rem;
 }
+
 </style>

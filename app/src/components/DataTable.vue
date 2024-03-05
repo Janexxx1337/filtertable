@@ -5,6 +5,7 @@
       :type-calc-options="typeCalcOptions"
       @update-filters="handleFilterUpdate"
   />
+
   <div class="table-responsive">
     <table class="table table-sm table-striped table-hover">
       <thead>
@@ -14,9 +15,8 @@
       </tr>
       </thead>
       <tbody>
-      <tr v-for="item in data" :key="item.id">
+      <tr v-for="item in filteredData" :key="item.id">
         <td v-for="column in filteredColumns" :key="column.key">
-          <!-- Проверяем, является ли это колонка 'type' или 'type_calc', если да, то используем соответствующий маппинг -->
           {{ column.key === 'type' ? typeMapping[item[column.key]] : column.key === 'type_calc' ? typeCalcMapping[item[column.key]] : item[column.key] }}
         </td>
       </tr>
@@ -44,17 +44,16 @@ const activeFilters = ref({
 });
 
 const handleFilterUpdate = (filters) => {
-  // Обновляем активные фильтры
   Object.assign(activeFilters.value, filters);
 
-  // Применяем фильтры к данным
-  filteredData.value = data.value.filter((item) => {
+  filteredData.value = data.value.filter(item => {
     return (!activeFilters.value.type.length || activeFilters.value.type.includes(item.type)) &&
         (!activeFilters.value.typeCalc.length || activeFilters.value.typeCalc.includes(item.type_calc)) &&
         (!activeFilters.value.source.length || activeFilters.value.source.includes(item.source)) &&
         (!activeFilters.value.paramName.length || activeFilters.value.paramName.includes(item.param_name));
   });
 };
+
 
 const typeOptions = computed(() => Object.values(typeMapping.value));
 const typeCalcOptions = computed(() => Object.values(typeCalcMapping.value));
@@ -82,6 +81,7 @@ onMounted(async () => {
 
   const dataResponse = await import('../data/api_data.json');
   data.value = dataResponse.default;
+  filteredData.value = data.value;
 });
 
 const filteredColumns = computed(() => {
@@ -93,6 +93,9 @@ const filteredColumns = computed(() => {
 
 .table-container {
   display: flex;
+  border: 1px solid;
+  padding: 10px;
+  border-radius: 6px;
 }
 
 .table-responsive {
