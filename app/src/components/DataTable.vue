@@ -1,34 +1,49 @@
 <template>
-<div class="table-container">
-  <DataFilters
-      :type-options="typeOptions"
-      :type-calc-options="typeCalcOptions"
-      @update-filters="handleFilterUpdate"
-  />
+  <div class="table-container">
+    <div class="filter-container">
+      <p v-if="filteredData.length > 0">Отфильтровано записей: {{ filteredCount }}</p>
 
-  <div class="table-responsive">
-    <table class="table table-sm table-striped table-hover">
-      <thead>
-      <tr>
-        <!-- Генерация заголовков таблицы для выбранных колонок -->
-        <th v-for="column in filteredColumns" :key="column.key">{{ column.label }}</th>
-      </tr>
-      </thead>
-      <tbody>
-      <tr v-for="item in filteredData" :key="item.id">
-        <td v-for="column in filteredColumns" :key="column.key">
-          {{ column.key === 'type' ? typeMapping[item[column.key]] : column.key === 'type_calc' ? typeCalcMapping[item[column.key]] : item[column.key] }}
-        </td>
-      </tr>
-      </tbody>
-    </table>
+      <DataFilters
+          :type-options="typeOptions"
+          :type-calc-options="typeCalcOptions"
+          @update-filters="handleFilterUpdate"
+      />
+    </div>
+
+    <div class="table-responsive">
+      <table class="table table-sm table-striped table-hover">
+        <thead>
+        <tr>
+          <!-- Генерация заголовков таблицы для выбранных колонок -->
+          <th v-for="column in filteredColumns" :key="column.key">{{ column.label }}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Проверяем, есть ли данные для отображения -->
+        <template v-if="filteredData.length">
+          <tr v-for="item in filteredData" :key="item.id">
+            <td v-for="column in filteredColumns" :key="column.key">
+              {{
+                column.key === 'type' ? typeMapping[item[column.key]] : column.key === 'type_calc' ? typeCalcMapping[item[column.key]] : item[column.key]
+              }}
+            </td>
+          </tr>
+        </template>
+        <!-- Сообщение, если данных нет -->
+        <tr v-else>
+          <td :colspan="filteredColumns.length">Совпадений нет</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
-</div>
 </template>
 
+
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import {ref, onMounted, computed} from 'vue';
 import DataFilters from './DataFilters.vue';
+
 const data = ref([]);
 const filteredData = ref([]);
 const columns = ref([]);
@@ -42,6 +57,7 @@ const activeFilters = ref({
   source: [],
   paramName: []
 });
+const filteredCount = computed(() => filteredData.value.length);
 
 const handleFilterUpdate = (filters) => {
   Object.assign(activeFilters.value, filters);
@@ -91,11 +107,16 @@ const filteredColumns = computed(() => {
 
 <style scoped>
 
+.filter-container {
+  display: flex;
+  flex-direction: column
+}
+
 .table-container {
   display: flex;
-  border: 1px solid;
-  padding: 10px;
+  justify-content: center;
   border-radius: 6px;
+  gap: 3%;
 }
 
 .table-responsive {

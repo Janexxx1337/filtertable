@@ -46,7 +46,7 @@
 
     <!-- Фильтр для 'param_name' -->
     <div class="filter-group">
-      <span class="filter-title">Наименование ценообразующего параметра</span>
+      <span class="filter-title sticky">Наименование ценообразующего параметра</span>
       <div v-for="option in paramNameOptions" :key="`param-name-${option}`" class="form-check">
         <input
             type="checkbox"
@@ -63,6 +63,13 @@
 
 <script setup>
 import { ref, onMounted, defineEmits, watch } from 'vue';
+import { useFilterData } from '../composables/useFilterData';
+
+const { loadData, typeOptions, typeCalcOptions, sourceOptions, paramNameOptions } = useFilterData();
+
+onMounted(async () => {
+  await loadData();
+});
 
 const emit = defineEmits(['update-filters']);
 const selectedFilters = ref({
@@ -72,11 +79,6 @@ const selectedFilters = ref({
   paramName: []
 });
 
-const typeOptions = ref([]);
-const typeCalcOptions = ref([]);
-const sourceOptions = ref([]);
-const paramNameOptions = ref([]);
-
 // Функция для излучения текущих фильтров
 const emitCurrentFilters = () => {
   emit('update-filters', selectedFilters.value);
@@ -85,42 +87,35 @@ const emitCurrentFilters = () => {
 // Установка наблюдателя за изменениями в каждом из фильтров
 watch(selectedFilters, emitCurrentFilters, { deep: true });
 
-onMounted(async () => {
-  const optionsResponse = await import('../data/api_options.json');
-  typeOptions.value = optionsResponse.actions.POST.type.choices.map(choice => ({
-    value: choice.value,
-    display_name: choice.display_name
-  }));
-  typeCalcOptions.value = optionsResponse.actions.POST.type_calc.choices.map(choice => ({
-    value: choice.value,
-    display_name: choice.display_name
-  }));
-
-  // Дополнительно загружаем 'api_data.json' для фильтров 'source' и 'param_name'
-  const dataResponse = await import('../data/api_data.json');
-  const sources = new Set();
-  const paramNames = new Set();
-  dataResponse.default.forEach(item => {
-    sources.add(item.source);
-    paramNames.add(item.param_name);
-  });
-  sourceOptions.value = Array.from(sources);
-  paramNameOptions.value = Array.from(paramNames);
-});
-
-const emitFilters = () => {
-  emit('update-filters', selectedFilters.value);
-};
 </script>
+
+
 <style scoped>
 .filter-group {
   margin-bottom: 1rem;
- text-align: center;
+  text-align: center;
+  max-height: 250px;
+  overflow-y: auto;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  background-color: #fff;
+  margin-top: 20px;
+  overflow-x: hidden;
 }
 
 .filter-title {
   font-weight: bold;
   margin-bottom: 0.5rem;
+  display: block;
 }
 
+.form-check-label {
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 350px;
+}
 </style>
