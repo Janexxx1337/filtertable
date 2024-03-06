@@ -1,7 +1,7 @@
 <template>
   <div class="table-container">
     <div class="filter-container">
-      <p v-if="filteredData.length > 0">Отфильтровано записей: {{ filteredCount }}</p>
+      <p v-if="filteredData.length > 0">Отфильтрованных записей: {{ filteredCount }}</p>
 
       <DataFilters
           :type-options="typeOptions"
@@ -21,7 +21,7 @@
         <tbody>
         <!-- Проверяем, есть ли данные для отображения -->
         <template v-if="filteredData.length">
-          <tr v-for="item in filteredData" :key="item.id">
+          <tr v-for="item in paginatedData" :key="item.id">
             <td v-for="column in filteredColumns" :key="column.key">
               {{
                 column.key === 'type' ? typeMapping[item[column.key]] : column.key === 'type_calc' ? typeCalcMapping[item[column.key]] : item[column.key]
@@ -35,13 +35,20 @@
         </tr>
         </tbody>
       </table>
+      <div class="pagination">
+        <button @click="setPage(page)" v-for="page in totalPages" :key="page" :disabled="currentPage === page">
+          {{ page }}
+        </button>
+      </div>
     </div>
-  </div>
-</template>
 
+  </div>
+
+</template>
 
 <script setup>
 import {ref, onMounted, computed} from 'vue';
+import { usePagination } from '../composables/usePagination';
 import DataFilters from './DataFilters.vue';
 
 const data = ref([]);
@@ -70,7 +77,7 @@ const handleFilterUpdate = (filters) => {
   });
 };
 
-
+const { paginatedData, currentPage, setPage, totalPages } = usePagination(filteredData);
 const typeOptions = computed(() => Object.values(typeMapping.value));
 const typeCalcOptions = computed(() => Object.values(typeCalcMapping.value));
 
@@ -117,11 +124,20 @@ const filteredColumns = computed(() => {
   justify-content: center;
   border-radius: 6px;
   gap: 3%;
+  width: 100%;
 }
 
 .table-responsive {
-  max-width: 100%;
+  width: 100%;
   margin: 20px auto;
+  max-height: 600px;
+  overflow-y: auto;
+  position: relative;
+}
+
+.pagination {
+  position: fixed;
+  bottom: 15%;
 }
 
 .table th {

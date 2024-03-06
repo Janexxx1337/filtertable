@@ -116,6 +116,6 @@ watch(selectedFilters, emitCurrentFilters, { deep: true });
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  width: 350px;
+  width: 150px;
 }
 </style>
