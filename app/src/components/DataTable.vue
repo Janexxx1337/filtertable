@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-import {ref, onMounted, computed} from 'vue';
+import {ref, onMounted, computed, watch} from 'vue';
 import { usePagination } from '../composables/usePagination';
 import DataFilters from './DataFilters.vue';
 
@@ -77,9 +77,14 @@ const handleFilterUpdate = (filters) => {
   });
 };
 
-const { paginatedData, currentPage, setPage, totalPages } = usePagination(filteredData);
+const { paginatedData, currentPage, setPage, totalPages, resetPage } = usePagination(filteredData);
 const typeOptions = computed(() => Object.values(typeMapping.value));
 const typeCalcOptions = computed(() => Object.values(typeCalcMapping.value));
+
+
+watch(filteredData, () => {
+  resetPage();
+}, { deep: true });
 
 filteredData.value = data.value; // По умолчанию отображаем все данные
 

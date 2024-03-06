@@ -18,5 +18,9 @@ export function usePagination(data) {
         currentPage.value = page;
     }
 
-    return { paginatedData, currentPage, setPage, totalPages };
+    function resetPage() {
+        currentPage.value = 1;
+    }
+
+    return { paginatedData, currentPage, setPage, totalPages, resetPage };
 }
